@@ -120,16 +120,25 @@
           </p>
         </div>
         <div class="content-area__row close-group-container">
-          <input type="checkbox" v-model="closeGroupConfirmed" />
-          <label class="content-area__label">
-            {{ fluent('access-group_close-group', 'confirm-text') }}
-          </label>
-          <Button
-            :disabled="!closeGroupConfirmed"
-            class="button--primary primary-actdion"
-            @click="handleCloseGroupClicked"
-            >{{ fluent('access-group_close-group', 'confirm-close') }}</Button
-          >
+          <div class="content-area__primary">
+            <input
+              class="content-area__value"
+              type="checkbox"
+              v-model="closeGroupConfirmed"
+            />
+            <label class="content-area__label">
+              {{ fluent('access-group_close-group', 'confirm-text') }}
+            </label>
+          </div>
+
+          <div class="content-area__actions">
+            <Button
+              :disabled="!closeGroupConfirmed"
+              class="button--primary primary-action"
+              @click="handleCloseGroupClicked"
+              >{{ fluent('access-group_close-group', 'confirm-close') }}</Button
+            >
+          </div>
         </div>
       </template>
     </AccessGroupEditPanel>
@@ -335,7 +344,11 @@ export default {
 
 .content-area p.content-area__value {
   color: var(--gray-40);
+  border: 2px solid var(--gray-40);
+  border-radius: var(--keyRadius);
+  padding: 0.5em;
 }
+
 .content-area .content-area__row.multi-line .content-area__value {
   width: 100%;
   margin-top: 1em;
@@ -355,6 +368,31 @@ export default {
   margin-top: 2em;
 }
 
+.content-area .content-area__row.close-group-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.content-area__row.close-group-container .content-area__primary {
+  flex: 3;
+  flex-direction: row;
+  justify-content: flex-start;
+  display: flex;
+  align-items: flex-start;
+}
+
+.close-group-container .content-area__primary .content-area__value {
+  width: auto;
+  margin-right: 1em;
+}
+
+.content-area__row.close-group-container .content-area__actions {
+  flex: 2;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
+}
 .close-group-container .button--primary[disabled='disabled'] {
   border: 1px solid var(--gray-40);
   color: var(--black);
