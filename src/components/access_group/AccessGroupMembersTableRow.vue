@@ -55,7 +55,7 @@ export default {
       if (this.pendingAction) {
         return [];
       }
-      return this.columns.filter(column => 'contentHandler' in column);
+      return this.columns.filter((column) => 'contentHandler' in column);
     },
     togglePending(status) {
       if (typeof status === 'boolean') {
@@ -67,44 +67,57 @@ export default {
 </script>
 <style scoped>
 .members-table__row {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 1em 0;
+  display: grid;
+  grid-template-areas:
+    'header header header'
+    'first second actions'
+    'footer footer footer';
 }
 
-.members-table__row .row-member__item {
-  padding-left: 1em;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.members-table__row .row-member__display {
+  grid-area: 'header';
 }
+@media (min-width: 57.5em) {
+  .members-table__row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1em 0;
+  }
 
-.members-table__row .row-member__item.row-member__display {
-  flex: 1.5;
-}
+  .members-table__row .row-member__item {
+    padding-left: 1em;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 
-.members-table__row .row-member__action-confirm {
-  vertical-align: center;
-  text-align: right;
-  flex: 3.5;
-}
+  .members-table__row .row-member__item.row-member__display {
+    flex: 1.5;
+  }
 
-.row-member__action-confirm .leave-confirm__description {
-  display: inline-block;
-  font-weight: bold;
-  margin-right: 1em;
-  margin-top: 0;
-  margin-bottom: 0;
-}
+  .members-table__row .row-member__action-confirm {
+    vertical-align: center;
+    text-align: right;
+    flex: 3.5;
+  }
 
-.row-member__action-confirm .button {
-  display: inline-block;
-  margin: 0 1em;
-}
+  .row-member__action-confirm .leave-confirm__description {
+    display: inline-block;
+    font-weight: bold;
+    margin-right: 1em;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
 
-.row-member__action-confirm .button:last-child {
-  margin-right: 0;
+  .row-member__action-confirm .button {
+    display: inline-block;
+    margin: 0 1em;
+  }
+
+  .row-member__action-confirm .button:last-child {
+    margin-right: 0;
+  }
 }
 </style>

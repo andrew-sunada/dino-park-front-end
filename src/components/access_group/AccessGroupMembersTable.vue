@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     getSecondaryColumns(member) {
-      return this.columns.filter(column => 'contentHandler' in column);
+      return this.columns.filter((column) => 'contentHandler' in column);
     },
   },
 };
@@ -69,53 +69,59 @@ export default {
   border-collapse: collapse;
   width: 100%;
 }
+
 .members-table .members-table__header {
-  background: var(--gray-30);
-  border-bottom: 1px solid var(--gray-40);
-  color: var(--black);
-  text-transform: uppercase;
-  font-weight: bold;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  display: none;
 }
+@media (min-width: 57.5em) {
+  .members-table .members-table__header {
+    background: var(--gray-30);
+    border-bottom: 1px solid var(--gray-40);
+    color: var(--black);
+    text-transform: uppercase;
+    font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
 
-.members-table__header .heading-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 1.5em 1em;
-  text-align: left;
-  flex: 1;
-  cursor: pointer;
-}
+  .members-table__header .heading-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 1.5em 1em;
+    text-align: left;
+    flex: 1;
+    cursor: pointer;
+  }
 
-.members-table__header .heading-container.primary {
-  flex: 1.5;
-}
+  .members-table__header .heading-container.primary {
+    flex: 1.5;
+  }
 
-.members-table__header .sort-arrows {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  margin-left: 1em;
-}
+  .members-table__header .sort-arrows {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    margin-left: 1em;
+  }
 
-.sort-arrows .sort-arrows__up {
-  display: block;
-  border-bottom: 0.4em solid var(--black);
-  border-left: 0.4em solid transparent;
-  border-right: 0.4em solid transparent;
-  margin-bottom: 0.15em;
-}
+  .sort-arrows .sort-arrows__up {
+    display: block;
+    border-bottom: 0.4em solid var(--black);
+    border-left: 0.4em solid transparent;
+    border-right: 0.4em solid transparent;
+    margin-bottom: 0.15em;
+  }
 
-.sort-arrows .sort-arrows__down {
-  display: block;
-  border-top: 0.4em solid var(--black);
-  border-left: 0.4em solid transparent;
-  border-right: 0.4em solid transparent;
+  .sort-arrows .sort-arrows__down {
+    display: block;
+    border-top: 0.4em solid var(--black);
+    border-left: 0.4em solid transparent;
+    border-right: 0.4em solid transparent;
+  }
 }
 
 .members-table__body:not(.including-headers)

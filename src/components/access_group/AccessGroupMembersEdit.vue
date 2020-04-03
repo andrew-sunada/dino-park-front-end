@@ -6,22 +6,24 @@
     >
       <template v-slot:content>
         <div class="members-list-container">
-          <SearchForm
-            class="edit-members__search"
-            v-on:clear-query="clearSearchHandler"
-            :searchFormHandler="searchFormHandler"
-            :searchFormLabel="
-              fluent('access-group_members', 'edit-members__search')
-            "
-          ></SearchForm>
-          <Select
-            class="options--chevron options--large sort-select"
-            label="Sort"
-            id="member-list-sort"
-            v-model="selectedSort"
-            :options="sortOptions"
-            :nonOption="defaultSort"
-          ></Select>
+          <header class="members-list-container__controls">
+            <SearchForm
+              class="edit-members__search"
+              v-on:clear-query="clearSearchHandler"
+              :searchFormHandler="searchFormHandler"
+              :searchFormLabel="
+                fluent('access-group_members', 'edit-members__search')
+              "
+            ></SearchForm>
+            <Select
+              class="options--chevron options--large sort-select"
+              label="Sort"
+              id="member-list-sort"
+              v-model="selectedSort"
+              :options="sortOptions"
+              :nonOption="defaultSort"
+            ></Select>
+          </header>
           <AccessGroupMembersTable
             :data="membersList"
             :columns="membersColumns"
@@ -39,9 +41,9 @@
                 @click="handleRemoveConfirmClick(member)"
                 >{{ fluent('access-group_members', 'remove-action') }}</Button
               >
-              <Button class="secondary-button" @click="togglePending(false)">
-                {{ fluent('access-group_members', 'remove-cancel') }}
-              </Button>
+              <Button class="secondary-button" @click="togglePending(false)">{{
+                fluent('access-group_members', 'remove-cancel')
+              }}</Button>
             </div>
             <div
               slot="row-actions"
@@ -120,9 +122,9 @@
       <template v-slot:content>
         <div class="members-expiration-container">
           <div class="content-area__row expiration-container">
-            <label class="content-area__label expiration-container__label">
-              {{ fluent('access-group_expiration', 'expiration__description') }}
-            </label>
+            <label class="content-area__label expiration-container__label">{{
+              fluent('access-group_expiration', 'expiration__description')
+            }}</label>
             <RadioSelect
               class="expiration-container__value"
               :options="expirationOptions"
@@ -472,11 +474,26 @@ export default {
   position: relative;
 }
 
+.members-list-container .members-list-container__controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1em;
+}
+
 .members-list-container .edit-members__search {
   margin: 0 2em 1em;
 }
 
+.members-list-container .sort-select.options {
+  align-self: initial;
+}
+
 @media (min-width: 57.5em) {
+  .members-list-container .members-list-container__controls {
+    display: block;
+  }
   .edit-members-container .edit-members-section__header {
     margin-left: 0;
   }
@@ -485,12 +502,11 @@ export default {
     width: auto;
     padding-top: 0.5em;
   }
-}
-
-.sort-select {
-  position: absolute;
-  top: 0;
-  right: 0;
+  .sort-select {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
 }
 
 .edit-members__table {
