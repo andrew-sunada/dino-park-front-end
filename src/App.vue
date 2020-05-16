@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import { FactorBlockTemplate } from '@mozilla/factor-ui';
 import Banner from '@/components/ui/Banner.vue';
 import TopBar from '@/components/ui/TopBar.vue';
 import Footer from '@/components/ui/Footer.vue';
