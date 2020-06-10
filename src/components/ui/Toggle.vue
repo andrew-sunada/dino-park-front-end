@@ -110,5 +110,6 @@ export default {
 }
 .toggle + p {
   text-align: center;
+  margin: 1em 0;
 }
 </style>

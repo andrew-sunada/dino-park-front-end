@@ -1,31 +1,110 @@
 <template>
   <div id="app" :class="['app-container', containerCSS]">
-    <Banner v-if="showBanner" @close="showBanner = false" ref="banner" />
-    <TopBar></TopBar>
-    <GlobalNotifications class="container" />
-    <RouterView class="container" />
-    <Footer></Footer>
+    <FactorBlockTemplate :searchBarConfig="searchBarConfig">
+      <RouterLink
+        :to="{ name: 'Home' }"
+        class="top-bar__link--logo"
+        slot="logo"
+      >
+        <img src="@/assets/images/mozilla.svg" :alt="fluent('mozilla')" />
+      </RouterLink>
+      <template slot="main">
+        <GlobalNotifications class="container" />
+        <RouterView class="container" />
+      </template>
+      <div class="template-nav" slot="nav">
+        <RouterLink
+          v-if="showAccessGroupNav"
+          :to="{ name: indexPageName }"
+          class="top-bar__link"
+          exact-active-class="top-bar__link--current"
+          :title="fluent('access-group-nav-bar')"
+        >
+          <FactorIcon id="users-outline" :width="24" :height="24" />
+        </RouterLink>
+        <RouterLink
+          v-if="scope.isStaff"
+          :to="{ name: 'Orgchart' }"
+          class="top-bar__link"
+          exact-active-class="top-bar__link--current"
+          :title="fluent('orgchart_nav-bar')"
+        >
+          <title id="org-chart-link-icon-title">{{ fluent('orgchart') }}</title>
+          <FactorIcon id="org-chart" :width="24" :height="24" />
+        </RouterLink>
+      </div>
+      <template slot="profile">
+        <template v-if="scope.isLoggedIn">
+          <ShowMore
+            :buttonText="fluent('user-menu_open')"
+            :alternateButtonText="fluent('user-menu_close')"
+            buttonClass="top-bar__user-menu-toggle"
+            :closeWhenClickedOutside="true"
+            :buttonTextVisuallyHidden="true"
+          >
+            <template slot="overflow">
+              <UserMenu></UserMenu>
+            </template>
+            <template slot="button-content">
+              <UserPicture
+                v-if="scope.isReady"
+                :avatar="{
+                  picture: user.picture.value,
+                  username: user.primaryUsername.value,
+                }"
+                :size="40"
+                :pictureSize="100"
+                :showLabel="scope.isStaff"
+              ></UserPicture>
+              <UserPicture
+                v-else
+                :size="40"
+                :pictureSize="100"
+                :showLabel="scope.isStaff"
+              ></UserPicture>
+            </template>
+          </ShowMore>
+        </template>
+        <ExternalButtonLink
+          v-else
+          href="/_/login"
+          class="top-bar__login"
+          iconRight="chevron-right"
+          :text="fluent('log_in')"
+        ></ExternalButtonLink>
+      </template>
+      <Footer slot="footer-links"> </Footer>
+    </FactorBlockTemplate>
+    <!-- <TopBar></TopBar> -->
     <OnboardingModal v-if="showOnboarding"></OnboardingModal>
     <TourTooltip v-if="showTooltipTour" />
   </div>
 </template>
 
 <script>
-import { FactorBlockTemplate } from '@mozilla/factor-ui';
-import Banner from '@/components/ui/Banner.vue';
-import TopBar from '@/components/ui/TopBar.vue';
+import { FactorBlockTemplate, FactorIcon } from '@mozilla/factor-ui';
+import { ACCESS_GROUP_INDEX_PAGE } from '@/router';
+import ShowMore from '@/components/_functional/ShowMore.vue';
+import UserMenu from '@/components/ui/UserMenu.vue';
+import UserPicture from '@/components/ui/UserPicture.vue';
+import ExternalButtonLink from '@/components/ui/ExternalButtonLink.vue';
 import Footer from '@/components/ui/Footer.vue';
 import GlobalNotifications from '@/components/ui/GlobalNotifications.vue';
+import OnboardingModal from '@/components/guide/OnboardingModal.vue';
+import '@mozilla/factor-ui/dist/lib/factor.css';
 
 export default {
   name: 'PageHome',
   components: {
-    Banner,
-    TopBar,
+    ShowMore,
+    ExternalButtonLink,
     Footer,
+    UserMenu,
+    UserPicture,
+    FactorIcon,
     GlobalNotifications,
-    OnboardingModal: () => import('@/components/guide/OnboardingModal.vue'),
-    TourTooltip: () => import('@/components/guide/TourTooltip.vue'),
+    OnboardingModal,
+    FactorBlockTemplate,
   },
   computed: {
     containerCSS() {
@@ -34,8 +113,20 @@ export default {
     showOnboarding() {
       return this.$store.state.onboarding.modal;
     },
-    showTooltipTour() {
-      return this.$store.state.onboarding.tooltipTour;
+    searchBarConfig() {
+      return {
+        handler: this.searchBarHandler,
+        label: this.fluent('search_input', 'placeholder'),
+        value: this.$route.query.q,
+        dropdownEnabled: false,
+      };
+    },
+    showAccessGroupNav() {
+      const { isNdaed, isStaff } = this.$store.state.scope;
+      return isNdaed || isStaff;
+    },
+    user() {
+      return this.$store.state.user;
     },
   },
   methods: {
@@ -46,13 +137,22 @@ export default {
         }
       });
     },
+    searchBarHandler(searchQuery, scope) {
+      this.$router.push({
+        name: 'Search',
+        query: {
+          query: searchQuery,
+          who: scope,
+        },
+      });
+    },
   },
   mounted() {
     this.awaitTabbing();
   },
   data() {
     return {
-      showBanner: false,
+      indexPageName: ACCESS_GROUP_INDEX_PAGE,
     };
   },
 };
@@ -288,5 +388,71 @@ abbr {
 .actions button {
   display: block;
   width: 100%;
+}
+
+.block-template .f-main {
+  margin-top: 0;
+}
+
+/* Top bar logo styles */
+
+.top-bar__link--logo {
+  margin-right: auto;
+  margin: 1.6em auto 1.6em 1.6em;
+  padding: 0;
+  max-width: none; /* don't shrink on small screens */
+  border-radius: 0;
+}
+.top-bar__link--logo img {
+  vertical-align: middle;
+  width: 103px;
+  height: 30px;
+}
+@media (min-width: 57.5em) {
+  .top-bar__link--logo img {
+    width: 112px;
+    height: 32px;
+  }
+}
+
+.template-nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.template-nav .top-bar__link {
+  padding: 0.57em;
+  text-transform: uppercase;
+  color: var(--black);
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.2s ease-in-out;
+  border-radius: var(--imageRadius);
+  line-height: 0.75; /* to not add vertical whitespace */
+}
+
+.template-nav .top-bar__link:hover {
+  background-color: var(--gray-20);
+}
+.top-bar__user-menu-toggle {
+  border: 0;
+  background-color: transparent;
+  padding: 1.6em;
+}
+.top-bar__user-menu-toggle:hover {
+  background-color: var(--gray-20);
+}
+.top-bar__user-menu-toggle img {
+  border-radius: var(--imageRadius);
+}
+.top-bar__user-menu-toggle img,
+.top-bar__search-toggle svg {
+  margin-right: 0;
+}
+.top-bar__login {
+  margin-left: 1em;
+  margin-right: 1em;
 }
 </style>

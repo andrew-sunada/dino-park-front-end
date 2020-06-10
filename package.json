@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@fluent/bundle": "^0.15.1",
-    "@mozilla/factor-ui": "0.0.4",
+    "@mozilla/factor-ui": "file:../../../mozilla-it/factor-ui",
     "@types/jest": "^25.2.1",
     "apollo-boost": "^0.4.7",
     "apollo-cache-inmemory": "^1.6.5",
