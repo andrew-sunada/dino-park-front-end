@@ -4,6 +4,7 @@ import { ProfileViewModel } from '@/view_models/ProfileViewModel.js';
 
 export const profileState = {
   profile: null,
+  loaded: false,
 };
 export const profileActions = {
   async fetchProfile({ commit, dispatch }) {
@@ -20,6 +21,7 @@ export const profileActions = {
 };
 export const profileMutations = {
   setProfile(state, user) {
+    state.loaded = true;
     try {
       state.profile = new ProfileViewModel(user);
     } catch (e) {
@@ -29,7 +31,6 @@ export const profileMutations = {
   },
 };
 export const profileGetters = {
-  getProfile: (state) => {
-    return state.profile;
-  },
+  getProfile: ({ profile }) => profile,
+  getLoaded: ({ loaded }) => loaded,
 };

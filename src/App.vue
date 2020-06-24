@@ -34,45 +34,15 @@
         </RouterLink>
       </div>
       <template slot="profile">
-        <template v-if="scope.isLoggedIn">
-          <ShowMore
-            :buttonText="fluent('user-menu_open')"
-            :alternateButtonText="fluent('user-menu_close')"
-            buttonClass="top-bar__user-menu-toggle"
-            :closeWhenClickedOutside="true"
-            :buttonTextVisuallyHidden="true"
-          >
-            <template slot="overflow">
-              <UserMenu></UserMenu>
-            </template>
-            <template slot="button-content">
-              <UserPicture
-                v-if="scope.isReady"
-                :avatar="{
-                  picture: user.picture.value,
-                  username: user.primaryUsername.value,
-                }"
-                :size="40"
-                :pictureSize="100"
-                :showLabel="scope.isStaff"
-              ></UserPicture>
-              <UserPicture
-                v-else
-                :size="40"
-                :pictureSize="100"
-                :showLabel="scope.isStaff"
-              ></UserPicture>
-            </template>
-          </ShowMore>
-        </template>
-        <ExternalButtonLink
-          v-else
-          href="/_/login"
-          class="top-bar__login"
-          iconRight="chevron-right"
-          :text="fluent('log_in')"
-        ></ExternalButtonLink>
+        <FactorProfileNav
+          slot="profile"
+          :showMenu="userLoaded"
+          loginLink="/_/login"
+          :avatar="avatar"
+          :strings="profileNavStrings"
+        ></FactorProfileNav>
       </template>
+
       <Footer slot="footer-links"> </Footer>
     </FactorBlockTemplate>
     <!-- <TopBar></TopBar> -->
@@ -82,7 +52,12 @@
 </template>
 
 <script>
-import { FactorBlockTemplate, FactorIcon } from '@mozilla/factor-ui';
+import { mapGetters } from 'vuex';
+import {
+  FactorBlockTemplate,
+  FactorIcon,
+  FactorProfileNav,
+} from '@mozilla/factor-ui';
 import { ACCESS_GROUP_INDEX_PAGE } from '@/router';
 import ShowMore from '@/components/_functional/ShowMore.vue';
 import UserMenu from '@/components/ui/UserMenu.vue';
@@ -105,8 +80,14 @@ export default {
     GlobalNotifications,
     OnboardingModal,
     FactorBlockTemplate,
+    FactorProfileNav,
   },
   computed: {
+    ...mapGetters({
+      profile: 'userV2/getProfile',
+      isStaff: 'scopeV2/isStaff',
+      userLoaded: 'userV2/getLoaded',
+    }),
     containerCSS() {
       return `${this.$route.meta.key}-container`;
     },
@@ -127,6 +108,23 @@ export default {
     },
     user() {
       return this.$store.state.user;
+    },
+    showTooltipTour() {
+      return this.$store.state.onboarding.tooltipTour;
+    },
+    avatar() {
+      if (!this.profile) {
+        return null;
+      }
+      return {
+        imageUrl: this.profile.picture,
+        username: this.profile.primaryUsername,
+        isStaff: this.isStaff,
+        loaded: this.userLoaded,
+        firstName: this.profile.firstName,
+        lastName: this.profile.lastName,
+        primaryEmail: this.profile.primaryEmail,
+      };
     },
   },
   methods: {
@@ -153,6 +151,16 @@ export default {
   data() {
     return {
       indexPageName: ACCESS_GROUP_INDEX_PAGE,
+      profileNavStrings: {
+        buttonText: this.fluent('user-menu_open'),
+        alternateButtonText: this.fluent('user-menu_close'),
+        loginText: this.fluent('log_in'),
+        closeMenuHidden: this.fluent('user-menu_close'),
+        userMenuMyProfile: this.fluent('user-menu_my-profile'),
+        userMenuDashboard: this.fluent('user-menu_dashboard'),
+        userMenuNotifications: this.fluent('user-menu_notifications'),
+        userMenuLogout: this.fluent('user-menu_logout'),
+      },
     };
   },
 };
@@ -431,6 +439,25 @@ abbr {
   transition: background-color 0.2s ease-in-out;
   border-radius: var(--imageRadius);
   line-height: 0.75; /* to not add vertical whitespace */
+  position: relative;
+}
+
+@media (min-width: 50em) {
+  .template-nav .top-bar__link--current {
+    background-color: transparent;
+  }
+  .template-nav .top-bar__link--current::after {
+    content: '';
+    height: 0.1428em;
+    background: black;
+    width: 100%;
+    position: absolute;
+    bottom: -1.4em;
+    left: 0;
+  }
+  .template-nav .top-bar__link--current {
+    outline: none;
+  }
 }
 
 .template-nav .top-bar__link:hover {
